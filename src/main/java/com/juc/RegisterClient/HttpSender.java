@@ -1,4 +1,4 @@
-package com.juc.demo;
+package com.juc.RegisterClient;
 
 /**
  * 负责发送各种http请求的组件

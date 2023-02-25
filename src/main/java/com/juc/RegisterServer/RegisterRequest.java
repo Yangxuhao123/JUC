@@ -1,4 +1,4 @@
-package com.juc.demo;
+package com.juc.RegisterServer;
 
 /**
  * 注册请求

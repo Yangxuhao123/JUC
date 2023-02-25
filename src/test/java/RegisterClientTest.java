@@ -1,4 +1,4 @@
-import com.juc.demo.RegisterClient;
+import com.juc.RegisterClient.RegisterClient;
 
 /**
  * register-client组件的测试类

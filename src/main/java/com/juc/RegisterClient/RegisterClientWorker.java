@@ -1,4 +1,4 @@
-package com.juc.demo;
+package com.juc.RegisterClient;
 
 /**
  * 负责向register-server发起注册申请的线程

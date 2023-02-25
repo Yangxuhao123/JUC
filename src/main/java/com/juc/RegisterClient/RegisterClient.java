@@ -1,4 +1,4 @@
-package com.juc.demo;
+package com.juc.RegisterClient;
 
 import java.util.UUID;
 
