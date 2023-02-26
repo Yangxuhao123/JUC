@@ -11,7 +11,7 @@ public class RegisterClient {
     public static final String IP = "192.168.31.207";
     public static final String HOSTNAME = "inventory01";
     public static final int PORT = 9000;
-    private static final Long HEARTBEAT_INTERVAL = 30 * 1000L;
+    private static final Long HEARTBEAT_INTERVAL = 5 * 1000L;
 
     /**
      * 服务实例id
