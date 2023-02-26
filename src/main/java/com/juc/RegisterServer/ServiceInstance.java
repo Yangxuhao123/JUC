@@ -71,7 +71,7 @@ public class ServiceInstance {
 		/**
 		 * 最近一次心跳的时间
 		 */
-		private Long latestHeartbeatTime = System.currentTimeMillis();
+		private volatile Long latestHeartbeatTime = System.currentTimeMillis();
 
 		/**
 		 * 续约，你只要发送一次心跳，就相当于把register-client和register-server之间维护的一个契约

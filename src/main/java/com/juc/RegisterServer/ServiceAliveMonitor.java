@@ -37,7 +37,6 @@ public class ServiceAliveMonitor {
 
 	/**
 	 * 负责监控微服务存活状态的后台线程
-	 * @author zhonghuashishan
 	 *
 	 */
 	private class Daemon extends Thread {
