@@ -1,7 +1,5 @@
 package com.juc.RegisterClient;
 
-import com.juc.RegisterServer.ServiceInstance;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +18,7 @@ public class ClientCachedServiceRegistry {
 	/**
 	 * 客户端缓存的服务注册表
 	 */
-	private Map<String, Map<String, ServiceInstance>> registry =
+	private Map<String, Map<String, ServiceInstance>> registry = 
 			new HashMap<String, Map<String, ServiceInstance>>();
 	/**
 	 * 负责定时拉取注册表到客户端进行缓存的后台线程
@@ -59,9 +57,11 @@ public class ClientCachedServiceRegistry {
 	
 	/**
 	 * 负责定时拉取注册表到本地来进行缓存
+	 * @author zhonghuashishan
 	 *
 	 */
 	private class Daemon extends Thread {
+		
 		@Override
 		public void run() {
 			while(registerClient.isRunning()) {  

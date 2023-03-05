@@ -5,7 +5,8 @@ package com.juc.RegisterServer;
  * 里面包含了一个服务实例的所有信息
  * 比如说服务名称、ip地址、hostname、端口号、服务实例id
  * 还有就是契约信息（Lease）
- *
+ * 
+ * @author zhonghuashishan
  *
  */
 public class ServiceInstance {
@@ -60,10 +61,11 @@ public class ServiceInstance {
 	}
 	
 	/**
-	 * 契约   不能抽出来作为一个类  契约必定属于一个服务实例
+	 * 契约
 	 * 维护了一个服务实例跟当前的这个注册中心之间的联系
 	 * 包括了心跳的时间，创建的时间，等等
-	 *
+	 * 
+	 * @author zhonghuashishan
 	 *
 	 */
 	private class Lease {
@@ -72,11 +74,10 @@ public class ServiceInstance {
 		 * 最近一次心跳的时间
 		 */
 		private volatile Long latestHeartbeatTime = System.currentTimeMillis();
-
+		
 		/**
 		 * 续约，你只要发送一次心跳，就相当于把register-client和register-server之间维护的一个契约
 		 * 进行了续约，我还存活着，我们俩的契约可以维持着
-		 * @param latestHeartbeatTime
 		 */
 		public void renew() {
 			this.latestHeartbeatTime = System.currentTimeMillis(); 

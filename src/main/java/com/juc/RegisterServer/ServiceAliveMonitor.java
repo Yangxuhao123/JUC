@@ -4,7 +4,6 @@ import java.util.Map;
 
 /**
  * 微服务存活状态监控组件
- * @author zhonghuashishan
  *
  */
 public class ServiceAliveMonitor {
@@ -18,16 +17,21 @@ public class ServiceAliveMonitor {
 	 * 负责监控微服务存活状态的后台线程
 	 */
 	private Daemon daemon;
-
-	public ServiceAliveMonitor(){
+	
+	public ServiceAliveMonitor() {
+//		ThreadGroup daemonThreadGroup = new ThreadGroup("daemon"); 
+//		System.out.println("daemon线程组的父线程组是：" + daemonThreadGroup.getParent()); 
+//		this.daemon = new Daemon(daemonThreadGroup, "ServiceAliveMonitor");   
+		
 		this.daemon = new Daemon();
-		// 只要设置了这个标识为，就代表这个线程是一个daemon线程，后台线程
+		// 只要设置了这个标志位，就代表这个线程是一个daemon线程，后台线程
 		// 非daemon线程，我们一般叫做工作线程
-		// 如果工作线程（main线程） 都结束了，daemonb线程是不会组织jvm进程退出的；
-		// daemon线程会跟着jvm进程一起退出ß
-		daemon.setDaemon(true);
+		// 如果工作线程（main线程）都结束了，daemon线程是不会阻止jvm进程退出的
+		// daemon线程会跟着jvm进程一起退出
+		daemon.setDaemon(true);  
+		daemon.setName("ServiceAliveMonitor");  
 	}
-
+	
 	/**
 	 * 启动后台线程
 	 */
@@ -37,18 +41,33 @@ public class ServiceAliveMonitor {
 
 	/**
 	 * 负责监控微服务存活状态的后台线程
+	 * @author zhonghuashishan
 	 *
 	 */
 	private class Daemon extends Thread {
 		
-		private Registry registry = Registry.getInstance();
+		private ServiceRegistry registry = ServiceRegistry.getInstance();
+		
+//		public Daemon(ThreadGroup threadGroup, String name) {
+//			super(threadGroup, name);
+//		}
 		
 		@Override
 		public void run() {
 			Map<String, Map<String, ServiceInstance>> registryMap = null;
 			
+//			System.out.println(Thread.currentThread().getName() + "线程的线程组是：" 
+//					+ Thread.currentThread().getThreadGroup());  
+			
 			while(true) {
 				try {
+					// 可以判断一下是否要开启自我保护机制
+					SelfProtectionPolicy selfProtectionPolicy = SelfProtectionPolicy.getInstance();
+					if(selfProtectionPolicy.isEnable()) {
+						Thread.sleep(CHECK_ALIVE_INTERVAL);
+						continue;
+					}
+					
 					registryMap = registry.getRegistry();
 					
 					for(String serviceName : registryMap.keySet()) {
@@ -61,6 +80,14 @@ public class ServiceAliveMonitor {
 							// 从注册表中摘除这个服务实例
 							if(!serviceInstance.isAlive()) {
 								registry.remove(serviceName, serviceInstance.getServiceInstanceId()); 
+								
+								// 更新自我保护机制的阈值
+								synchronized(SelfProtectionPolicy.class) {
+									selfProtectionPolicy.setExpectedHeartbeatRate(
+											selfProtectionPolicy.getExpectedHeartbeatRate() - 2);  
+									selfProtectionPolicy.setExpectedHeartbeatThreshold(
+											(long)(selfProtectionPolicy.getExpectedHeartbeatRate() * 0.85));  
+								}
 							}
 						}
 					}

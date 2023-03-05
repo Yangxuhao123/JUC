@@ -1,15 +1,16 @@
 package com.juc.RegisterServer;
 
+import java.util.Map;
+
 /**
  * 这个controller是负责接收register-client发送过来的请求的
  * 在Spring Cloud Eureka中用的组件是jersey，百度一下jersey是什么东西
  * 在国外很常用jersey，restful框架，可以接受http请求
  *
- *
  */
 public class RegisterServerController {
 
-	private Registry registry = Registry.getInstance();
+	private ServiceRegistry registry = ServiceRegistry.getInstance();
 	
 	/**
 	 * 服务注册
@@ -20,6 +21,7 @@ public class RegisterServerController {
 		RegisterResponse registerResponse = new RegisterResponse();
 		
 		try {
+			// 在注册表中加入这个服务实例
 			ServiceInstance serviceInstance = new ServiceInstance();
 			serviceInstance.setHostname(registerRequest.getHostname()); 
 			serviceInstance.setIp(registerRequest.getIp()); 
@@ -28,6 +30,15 @@ public class RegisterServerController {
 			serviceInstance.setServiceName(registerRequest.getServiceName());  
 			
 			registry.register(serviceInstance);  
+			
+			// 更新自我保护机制的阈值
+			synchronized(SelfProtectionPolicy.class) {
+				SelfProtectionPolicy selfProtectionPolicy = SelfProtectionPolicy.getInstance();
+				selfProtectionPolicy.setExpectedHeartbeatRate(
+						selfProtectionPolicy.getExpectedHeartbeatRate() + 2);  
+				selfProtectionPolicy.setExpectedHeartbeatThreshold(
+						(long)(selfProtectionPolicy.getExpectedHeartbeatRate() * 0.85));  
+			}
 			
 			registerResponse.setStatus(RegisterResponse.SUCCESS); 
 		} catch (Exception e) {
@@ -47,9 +58,15 @@ public class RegisterServerController {
 		HeartbeatResponse heartbeatResponse = new HeartbeatResponse();
 		
 		try {
+			// 对服务实例进行续约
 			ServiceInstance serviceInstance = registry.getServiceInstance(
-					heartbeatRequest.getServiceName(), heartbeatRequest.getServiceInstanceId());
+					heartbeatRequest.getServiceName(), 
+					heartbeatRequest.getServiceInstanceId());
 			serviceInstance.renew();
+			
+			// 记录一下每分钟的心跳的次数
+			HeartbeatMessuredRate heartbeatMessuredRate = HeartbeatMessuredRate.getInstance();
+			heartbeatMessuredRate.increment();
 			
 			heartbeatResponse.setStatus(HeartbeatResponse.SUCCESS); 
 		} catch (Exception e) {
@@ -58,6 +75,31 @@ public class RegisterServerController {
 		}
 		
 		return heartbeatResponse;
+	}
+	
+	/**
+	 * 拉取服务注册表
+	 * @return
+	 */
+	public Map<String, Map<String, ServiceInstance>> fetchServiceRegistry() {
+		return registry.getRegistry();
+	}
+	
+	/**
+	 * 服务下线
+	 */
+	public void cancel(String serviceName, String serviceInstanceId) {
+		// 从服务注册中摘除实例
+		registry.remove(serviceName, serviceInstanceId); 
+		
+		// 更新自我保护机制的阈值
+		synchronized(SelfProtectionPolicy.class) {
+			SelfProtectionPolicy selfProtectionPolicy = SelfProtectionPolicy.getInstance();
+			selfProtectionPolicy.setExpectedHeartbeatRate(
+					selfProtectionPolicy.getExpectedHeartbeatRate() - 2);  
+			selfProtectionPolicy.setExpectedHeartbeatThreshold(
+					(long)(selfProtectionPolicy.getExpectedHeartbeatRate() * 0.85));  
+		}
 	}
 	
 }
