@@ -1,3 +1,5 @@
+import com.juc.registerclient.RegisterClient;
+
 /**
  * register-client组件的测试类
  * @author zhonghuashishan

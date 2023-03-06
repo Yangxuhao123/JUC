@@ -1,30 +1,33 @@
-package com.juc.RegisterServer;
+package com.juc.registerclient;
 
 /**
- * 注册请求
+ * 代表了一个服务实例
+ * 里面包含了一个服务实例的所有信息
+ * 比如说服务名称、ip地址、hostname、端口号、服务实例id
+ * 
  * @author zhonghuashishan
  *
  */
-public class RegisterRequest {
+public class ServiceInstance {
 
 	/**
 	 * 服务名称
 	 */
 	private String serviceName;
 	/**
-	 * 服务所在机器的ip地址
+	 * ip地址
 	 */
 	private String ip;
 	/**
-	 * 服务所在机器的主机名
+	 * 主机名
 	 */
 	private String hostname;
 	/**
-	 * 服务监听着哪个端口号
+	 * 端口号
 	 */
 	private int port;
 	/**
-	 * 服务实例
+	 * 服务实例id
 	 */
 	private String serviceInstanceId;
 	
@@ -61,7 +64,7 @@ public class RegisterRequest {
 	
 	@Override
 	public String toString() {
-		return "RegisterRequest [serviceName=" + serviceName + ", ip=" + ip + ", hostname=" + hostname + ", port="
+		return "ServiceInstance [serviceName=" + serviceName + ", ip=" + ip + ", hostname=" + hostname + ", port="
 				+ port + ", serviceInstanceId=" + serviceInstanceId + "]";
 	}
 	

@@ -1,4 +1,4 @@
-package com.juc.RegisterServer;
+package com.juc.registerserver;
 
 /**
  * 心跳测量计数器

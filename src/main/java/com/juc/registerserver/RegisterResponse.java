@@ -1,4 +1,4 @@
-package com.juc.RegisterClient;
+package com.juc.registerserver;
 
 /**
  * 注册响应

@@ -1,4 +1,4 @@
-package com.juc.RegisterServer;
+package com.juc.registerserver;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.juc.RegisterServer;
+package com.juc.registerserver;
 
 /**
  * 自我保护机制

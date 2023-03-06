@@ -1,4 +1,4 @@
-package com.juc.RegisterClient;
+package com.juc.registerclient;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.juc.RegisterServer;
+package com.juc.registerserver;
 
 /**
  * 代表了一个服务实例
