@@ -131,9 +131,11 @@ public class CachedServiceRegistry {
 					
 					// 拉取回来的是最近3分钟变化的服务实例
 					// 先拉了一个增量注册表，发现跟本地合并之后，条数不对
+					// 发起网络请求之前 获取一个版本号
 					Long expectedVersion = applicationsVersion.get();
 					DeltaRegistry deltaRegistry = httpSender.fetchDeltaRegistry();
-					
+
+					// 发起网络之后，修改注册表之前获取一个版本号，进行比对。
 					if(applicationsVersion.compareAndSet(expectedVersion, expectedVersion + 1)) {
 						// 一类是注册，一类是删除
 						// 如果是注册的话，就判断一下这个服务实例是否在这个本地缓存的注册表中
