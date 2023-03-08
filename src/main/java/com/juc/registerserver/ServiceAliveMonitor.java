@@ -4,6 +4,7 @@ import java.util.Map;
 
 /**
  * 微服务存活状态监控组件
+ * @author zhonghuashishan
  *
  */
 public class ServiceAliveMonitor {

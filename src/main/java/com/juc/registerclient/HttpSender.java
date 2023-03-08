@@ -1,7 +1,10 @@
 package com.juc.registerclient;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+
+import com.zhss.demo.register.client.CachedServiceRegistry.RecentlyChangedServiceInstance;
 
 /**
  * 负责发送各种http请求的组件
@@ -43,10 +46,10 @@ public class HttpSender {
 	}
 	
 	/**
-	 * 拉取服务注册表
+	 * 全量拉取服务注册表
 	 * @return
 	 */
-	public Map<String, Map<String, ServiceInstance>> fetchServiceRegistry() {
+	public Applications fetchFullRegistry() {
 		Map<String, Map<String, ServiceInstance>> registry = 
 				new HashMap<String, Map<String, ServiceInstance>>();
 		
@@ -64,7 +67,36 @@ public class HttpSender {
 		
 		System.out.println("拉取注册表：" + registry);  
 		
-		return registry;
+		return new Applications(registry); 
+	}
+	
+	/**
+	 * 增量拉取服务注册表
+	 * @return
+	 */
+	public DeltaRegistry fetchDeltaRegistry() {
+		LinkedList<RecentlyChangedServiceInstance> recentlyChangedQueue = 
+				new LinkedList<RecentlyChangedServiceInstance>();
+		
+		ServiceInstance serviceInstance = new ServiceInstance();
+		serviceInstance.setHostname("order-service-01");  
+		serviceInstance.setIp("192.168.31.288");  
+		serviceInstance.setPort(9000);  
+		serviceInstance.setServiceInstanceId("ORDER-SERVICE-192.168.31.288:9000");  
+		serviceInstance.setServiceName("ORDER-SERVICE");  
+		
+		RecentlyChangedServiceInstance recentlyChangedItem = new RecentlyChangedServiceInstance(
+				serviceInstance,
+				System.currentTimeMillis(),
+				"register");  
+		
+		recentlyChangedQueue.add(recentlyChangedItem);
+		
+		System.out.println("拉取增量注册表：" + recentlyChangedQueue);  
+		
+		DeltaRegistry deltaRegistry = new DeltaRegistry(recentlyChangedQueue, 2L); 
+		
+		return deltaRegistry;
 	}
 	
 	/**

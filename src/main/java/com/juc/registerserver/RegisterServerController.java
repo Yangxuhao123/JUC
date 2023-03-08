@@ -1,11 +1,11 @@
 package com.juc.registerserver;
 
-import java.util.Map;
-
 /**
  * 这个controller是负责接收register-client发送过来的请求的
  * 在Spring Cloud Eureka中用的组件是jersey，百度一下jersey是什么东西
  * 在国外很常用jersey，restful框架，可以接受http请求
+ * 
+ * @author zhonghuashishan
  *
  */
 public class RegisterServerController {
@@ -78,11 +78,19 @@ public class RegisterServerController {
 	}
 	
 	/**
-	 * 拉取服务注册表
+	 * 拉取全量注册表
 	 * @return
 	 */
-	public Map<String, Map<String, ServiceInstance>> fetchServiceRegistry() {
-		return registry.getRegistry();
+	public Applications fetchFullRegistry() {
+		return new Applications(registry.getRegistry());  
+	}
+	
+	/**
+	 * 拉取增量注册表
+	 * @return
+	 */
+	public DeltaRegistry fetchDeltaRegistry() {
+		return registry.getDeltaRegistry();
 	}
 	
 	/**
