@@ -48,6 +48,23 @@ public class RegisterServerController {
 	}
 	
 	/**
+	 * 服务下线
+	 */
+	public void cancel(String serviceName, String serviceInstanceId) {
+		// 从服务注册中摘除实例
+		registry.remove(serviceName, serviceInstanceId); 
+		
+		// 更新自我保护机制的阈值
+		synchronized(SelfProtectionPolicy.class) {
+			SelfProtectionPolicy selfProtectionPolicy = SelfProtectionPolicy.getInstance();
+			selfProtectionPolicy.setExpectedHeartbeatRate(
+					selfProtectionPolicy.getExpectedHeartbeatRate() - 2);  
+			selfProtectionPolicy.setExpectedHeartbeatThreshold(
+					(long)(selfProtectionPolicy.getExpectedHeartbeatRate() * 0.85));  
+		}
+	}
+	
+	/**
 	 * 发送心跳
 	 * @param heartbeatRequest 心跳请求
 	 * @return 心跳响应
@@ -56,11 +73,14 @@ public class RegisterServerController {
 		HeartbeatResponse heartbeatResponse = new HeartbeatResponse();
 		
 		try {
-			// 对服务实例进行续约
 			ServiceInstance serviceInstance = registry.getServiceInstance(
 					heartbeatRequest.getServiceName(), 
 					heartbeatRequest.getServiceInstanceId());
-			serviceInstance.renew();
+			if(serviceInstance != null) {
+				// 这里不加写锁了 加写锁的话 冲突概率很高
+				// 加读锁即可
+				serviceInstance.renew();
+			}
 			
 			// 记录一下每分钟的心跳的次数
 			HeartbeatCounter heartbeatMessuredRate = HeartbeatCounter.getInstance();
@@ -80,7 +100,12 @@ public class RegisterServerController {
 	 * @return
 	 */
 	public Applications fetchFullRegistry() {
-		return new Applications(registry.getRegistry());  
+		try {
+			registry.readLock();
+			return new Applications(registry.getRegistry());
+		} finally {
+			registry.readUnlock();
+		}
 	}
 	
 	/**
@@ -88,23 +113,11 @@ public class RegisterServerController {
 	 * @return
 	 */
 	public DeltaRegistry fetchDeltaRegistry() {
-		return registry.getDeltaRegistry();
-	}
-	
-	/**
-	 * 服务下线
-	 */
-	public void cancel(String serviceName, String serviceInstanceId) {
-		// 从服务注册中摘除实例
-		registry.remove(serviceName, serviceInstanceId); 
-		
-		// 更新自我保护机制的阈值
-		synchronized(SelfProtectionPolicy.class) {
-			SelfProtectionPolicy selfProtectionPolicy = SelfProtectionPolicy.getInstance();
-			selfProtectionPolicy.setExpectedHeartbeatRate(
-					selfProtectionPolicy.getExpectedHeartbeatRate() - 2);  
-			selfProtectionPolicy.setExpectedHeartbeatThreshold(
-					(long)(selfProtectionPolicy.getExpectedHeartbeatRate() * 0.85));  
+		try {
+			registry.readLock();
+			return registry.getDeltaRegistry();
+		} finally {
+			registry.readUnlock();  
 		}
 	}
 	

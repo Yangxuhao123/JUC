@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -67,27 +69,42 @@ public class ServiceAliveMonitor {
 						continue;
 					}
 					
-					registryMap = registry.getRegistry();
+					// 定义要删除的服务实例的集合
+					List<ServiceInstance> removingServiceInstances = new ArrayList<ServiceInstance>();
 					
-					for(String serviceName : registryMap.keySet()) {
-						Map<String, ServiceInstance> serviceInstanceMap = 
-								registryMap.get(serviceName);
+					// 开始读服务注册表的数据，这个过程中，别人可以读，但是不可以写
+					try {
+						// 对整个服务注册表，加读锁
+						registry.readLock();
 						
-						for(ServiceInstance serviceInstance : serviceInstanceMap.values()) {
-							// 说明服务实例距离上一次发送心跳已经超过90秒了
-							// 认为这个服务就死了
-							// 从注册表中摘除这个服务实例
-							if(!serviceInstance.isAlive()) {
-								registry.remove(serviceName, serviceInstance.getServiceInstanceId()); 
-								
-								// 更新自我保护机制的阈值
-								synchronized(SelfProtectionPolicy.class) {
-									selfProtectionPolicy.setExpectedHeartbeatRate(
-											selfProtectionPolicy.getExpectedHeartbeatRate() - 2);  
-									selfProtectionPolicy.setExpectedHeartbeatThreshold(
-											(long)(selfProtectionPolicy.getExpectedHeartbeatRate() * 0.85));  
-								}
+						registryMap = registry.getRegistry();
+						for(String serviceName : registryMap.keySet()) {
+							Map<String, ServiceInstance> serviceInstanceMap = 
+									registryMap.get(serviceName);
+							for(ServiceInstance serviceInstance : serviceInstanceMap.values()) {
+								// 说明服务实例距离上一次发送心跳已经超过90秒了
+								// 认为这个服务就死了
+								// 从注册表中摘除这个服务实例
+								if(!serviceInstance.isAlive()) {
+									removingServiceInstances.add(serviceInstance);
+								}  
 							}
+						}
+					} finally {
+						registry.readUnlock();
+					}
+					
+					// 将所有的要删除的服务实例，从服务注册表删除
+					for(ServiceInstance serviceInstance : removingServiceInstances) {
+						registry.remove(serviceInstance.getServiceName(), 
+								serviceInstance.getServiceInstanceId()); 
+						
+						// 更新自我保护机制的阈值
+						synchronized(SelfProtectionPolicy.class) {
+							selfProtectionPolicy.setExpectedHeartbeatRate(
+									selfProtectionPolicy.getExpectedHeartbeatRate() - 2);  
+							selfProtectionPolicy.setExpectedHeartbeatThreshold(
+									(long)(selfProtectionPolicy.getExpectedHeartbeatRate() * 0.85));  
 						}
 					}
 					
