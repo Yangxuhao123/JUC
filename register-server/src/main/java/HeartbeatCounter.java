@@ -1,4 +1,5 @@
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.LongAdder;
 
 /**
  * 心跳测量计数器
@@ -39,6 +40,10 @@ public class HeartbeatCounter {
 	
 	/**
 	 * 增加一次最近一分钟的心跳次数
+	 * 
+	 * 一旦加锁了之后，就会导致大量的线程并发的更新心跳次数，会导致加锁串行化
+	 * 进而导致多线程并发的性能会降低
+	 * 
 	 */
 	public /**synchronized*/ void increment() {
 		// 这个synchronized上锁，性能其实是很差的
@@ -76,7 +81,6 @@ public class HeartbeatCounter {
 								break;
 							}
 						}
-						
 						latestMinuteTimestamp = System.currentTimeMillis();
 					}
 					Thread.sleep(1000); 

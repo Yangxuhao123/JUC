@@ -121,7 +121,8 @@ public class RegisterClient {
 			heartbeatRequest.setServiceInstanceId(serviceInstanceId);
 			
 			HeartbeatResponse heartbeatResponse = null;
-			
+
+			// 关闭的时候 先让isRunning变为false  接着打断线程睡眠状态
 			while(isRunning) { 
 				try {
 					heartbeatResponse = httpSender.heartbeat(heartbeatRequest);

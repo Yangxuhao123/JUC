@@ -44,7 +44,7 @@ public class FSEditlog {
 			// 获取全局唯一递增的txid，代表了edits log的序号
 			txidSeq++;
 			long txid = txidSeq;
-			localTxid.set(txid); 
+			localTxid.set(txid);   // 放到了ThreadLocal中 相当于维护了一份本地线程的副本
 			
 			// 构造一条edits log对象
 			EditLog log = new EditLog(txid, content); 
@@ -75,7 +75,7 @@ public class FSEditlog {
 				// 那么这个时候来一个线程，他对应的txid = 3，此时他是可以直接返回了
 				// 就代表说肯定是他对应的edits log已经被别的线程在刷入磁盘了
 				// 这个时候txid = 3的线程就不需要等待了
-				long txid = localTxid.get();
+				long txid = localTxid.get();  // 获取本地线程副本
 				if(txid <= syncMaxTxid) {
 					return;
 				}

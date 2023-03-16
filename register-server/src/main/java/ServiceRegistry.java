@@ -166,13 +166,8 @@ public class ServiceRegistry {
 	 */
 	public ServiceInstance getServiceInstance(String serviceName,
 			String serviceInstanceId) {
-		try {
-			this.readLock();
-			Map<String, ServiceInstance> serviceInstanceMap = registry.get(serviceName);
-			return serviceInstanceMap.get(serviceInstanceId);
-		} finally {
-			this.readUnlock();  
-		}
+		Map<String, ServiceInstance> serviceInstanceMap = registry.get(serviceName);
+		return serviceInstanceMap.get(serviceInstanceId);
 	}
 	
 	/**

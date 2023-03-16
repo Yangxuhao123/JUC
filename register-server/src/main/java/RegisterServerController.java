@@ -1,3 +1,4 @@
+
 /**
  * 这个controller是负责接收register-client发送过来的请求的
  * 在Spring Cloud Eureka中用的组件是jersey，百度一下jersey是什么东西
@@ -8,7 +9,14 @@
  */
 public class RegisterServerController {
 
+	/**
+	 * 服务注册表
+	 */
 	private ServiceRegistry registry = ServiceRegistry.getInstance();
+	/**
+	 * 服务注册表的缓存
+	 */
+	private ServiceRegistryCache registryCache = ServiceRegistryCache.getInstance();
 	
 	/**
 	 * 服务注册
@@ -38,6 +46,9 @@ public class RegisterServerController {
 						(long)(selfProtectionPolicy.getExpectedHeartbeatRate() * 0.85));  
 			}
 			
+			// 过期掉注册表缓存
+			registryCache.invalidate();
+			
 			registerResponse.setStatus(RegisterResponse.SUCCESS); 
 		} catch (Exception e) {
 			e.printStackTrace(); 
@@ -62,6 +73,9 @@ public class RegisterServerController {
 			selfProtectionPolicy.setExpectedHeartbeatThreshold(
 					(long)(selfProtectionPolicy.getExpectedHeartbeatRate() * 0.85));  
 		}
+		
+		// 过期掉注册表缓存
+		registryCache.invalidate();
 	}
 	
 	/**
@@ -73,12 +87,11 @@ public class RegisterServerController {
 		HeartbeatResponse heartbeatResponse = new HeartbeatResponse();
 		
 		try {
+			// 获取服务实例
 			ServiceInstance serviceInstance = registry.getServiceInstance(
 					heartbeatRequest.getServiceName(), 
 					heartbeatRequest.getServiceInstanceId());
 			if(serviceInstance != null) {
-				// 这里不加写锁了 加写锁的话 冲突概率很高
-				// 加读锁即可
 				serviceInstance.renew();
 			}
 			
@@ -100,12 +113,7 @@ public class RegisterServerController {
 	 * @return
 	 */
 	public Applications fetchFullRegistry() {
-		try {
-			registry.readLock();
-			return new Applications(registry.getRegistry());
-		} finally {
-			registry.readUnlock();
-		}
+		return (Applications) registryCache.get(ServiceRegistryCache.CacheKey.FULL_SERVICE_REGISTRY);
 	}
 	
 	/**
@@ -113,12 +121,7 @@ public class RegisterServerController {
 	 * @return
 	 */
 	public DeltaRegistry fetchDeltaRegistry() {
-		try {
-			registry.readLock();
-			return registry.getDeltaRegistry();
-		} finally {
-			registry.readUnlock();  
-		}
+		return (DeltaRegistry) registryCache.get(ServiceRegistryCache.CacheKey.DELTA_SERVICE_REGISTRY);
 	}
 	
 }
