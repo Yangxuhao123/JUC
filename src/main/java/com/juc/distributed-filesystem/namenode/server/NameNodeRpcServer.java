@@ -1,4 +1,4 @@
-package com.juc.distributed;
+package main.java.com.juc.distributed;
 
 /**
  * NameNode的rpc服务的接口
@@ -10,9 +10,9 @@ public class NameNodeRpcServer {
 	/**
 	 * 负责管理元数据的核心组件
 	 */
-	private com.juc.distributed.FSNamesystem namesystem;
+	private FSNamesystem namesystem;
 	
-	public NameNodeRpcServer(com.juc.distributed.FSNamesystem namesystem) {
+	public NameNodeRpcServer(FSNamesystem namesystem) {
 		this.namesystem = namesystem;
 	}
 	

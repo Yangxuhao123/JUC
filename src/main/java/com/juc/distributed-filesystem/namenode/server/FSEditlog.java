@@ -1,4 +1,4 @@
-package com.juc.distributed;
+package main.java.com.juc.distributed;
 
 import java.util.LinkedList;
 
@@ -34,6 +34,10 @@ public class FSEditlog {
 	 */
 	private ThreadLocal<Long> localTxid = new ThreadLocal<Long>();
 	
+	// 就会导致说，对一个共享的map数据结构出现多线程并发的读写的问题
+	// 此时对这个map的读写是不是就需要加锁了
+//	private Map<Thread, Long> txidMap = new HashMap<Thread, Long>();
+	
 	/**
 	 * 记录edits log日志
 	 * @param log
@@ -44,13 +48,12 @@ public class FSEditlog {
 			// 获取全局唯一递增的txid，代表了edits log的序号
 			txidSeq++;
 			long txid = txidSeq;
-			localTxid.set(txid);   // 放到了ThreadLocal中 相当于维护了一份本地线程的副本
+			localTxid.set(txid); // 放到ThreadLocal里去，相当于就是维护了一份本地线程的副本
 			
 			// 构造一条edits log对象
 			EditLog log = new EditLog(txid, content); 
 			
 			// 将edits log写入内存缓冲中，不是直接刷入磁盘文件
-			// editLogBuffer中比如记录的是 3 hello  后面又抢到一把锁  4  world
 			editLogBuffer.write(log);  
 		}
 		
@@ -75,7 +78,7 @@ public class FSEditlog {
 				// 那么这个时候来一个线程，他对应的txid = 3，此时他是可以直接返回了
 				// 就代表说肯定是他对应的edits log已经被别的线程在刷入磁盘了
 				// 这个时候txid = 3的线程就不需要等待了
-				long txid = localTxid.get();  // 获取本地线程副本
+				long txid = localTxid.get(); // 获取到本地线程的副本
 				if(txid <= syncMaxTxid) {
 					return;
 				}

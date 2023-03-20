@@ -1,4 +1,4 @@
-package com.juc.distributed;
+package main.java.com.juc.distributed;
 
 /**
  * 负责管理元数据的核心组件
@@ -10,15 +10,15 @@ public class FSNamesystem {
 	/**
 	 * 负责管理内存文件目录树的组件
 	 */
-	private com.juc.distributed.FSDirectory directory;
+	private FSDirectory directory;
 	/**
 	 * 负责管理edits log写入磁盘的组件
 	 */
-	private com.juc.distributed.FSEditlog editlog;
+	private FSEditlog editlog;
 	
 	public FSNamesystem() {
-		this.directory = new com.juc.distributed.FSDirectory();
-		this.editlog = new com.juc.distributed.FSEditlog();
+		this.directory = new FSDirectory();
+		this.editlog = new FSEditlog();
 	}
 	
 	/**

@@ -1,4 +1,4 @@
-package com.juc.distributed;
+package main.java.com.juc.distributed;
 
 /**
  * NameNode核心启动类
@@ -14,11 +14,11 @@ public class NameNode {
 	/**
 	 * 负责管理元数据的核心组件
 	 */
-	private com.juc.distributed.FSNamesystem namesystem;
+	private FSNamesystem namesystem;
 	/**
 	 * NameNode对外提供rpc接口的server，可以响应请求
 	 */
-	private com.juc.distributed.NameNodeRpcServer rpcServer;
+	private NameNodeRpcServer rpcServer;
 	
 	public NameNode() {
 		this.shouldRun = true;
@@ -28,8 +28,8 @@ public class NameNode {
 	 * 初始化NameNode
 	 */
 	private void initialize() {
-		this.namesystem = new com.juc.distributed.FSNamesystem();
-		this.rpcServer = new com.juc.distributed.NameNodeRpcServer(this.namesystem);
+		this.namesystem = new FSNamesystem();
+		this.rpcServer = new NameNodeRpcServer(this.namesystem);  
 		this.rpcServer.start();
 	}
 	
