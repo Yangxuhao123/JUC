@@ -1,5 +1,7 @@
 package main.java.com.juc.distributed;
 
+import java.util.Iterator;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -7,7 +9,7 @@ import java.util.concurrent.CountDownLatch;
  * @author zhonghuashishan
  *
  */
-public class NameNodeGroupOfferService {
+public class NameNodeOfferService {
 
 	/**
 	 * 负责跟NameNode主节点通信的ServiceActor组件
@@ -17,13 +19,21 @@ public class NameNodeGroupOfferService {
 	 * 负责跟NameNode备节点通信的ServiceActor组件
 	 */
 	private main.java.com.juc.distributed.NameNodeServiceActor standbyServiceActor;
+	/**
+	 * 这个datanode上保存的ServiceActor列表
+	 */
+	private CopyOnWriteArrayList<main.java.com.juc.distributed.NameNodeServiceActor> serviceActors;
 	
 	/**
 	 * 构造函数
 	 */
-	public NameNodeGroupOfferService() {
+	public NameNodeOfferService() {
 		this.activeServiceActor = new main.java.com.juc.distributed.NameNodeServiceActor();
 		this.standbyServiceActor = new main.java.com.juc.distributed.NameNodeServiceActor();
+		
+		this.serviceActors = new CopyOnWriteArrayList<main.java.com.juc.distributed.NameNodeServiceActor>();
+		this.serviceActors.add(activeServiceActor);
+		this.serviceActors.add(standbyServiceActor);
 	}
 	
 	/**
@@ -46,6 +56,24 @@ public class NameNodeGroupOfferService {
 			System.out.println("主备NameNode全部注册完毕......");   
 		} catch (Exception e) {
 			e.printStackTrace();  
+		}
+	}
+	
+	/**
+	 * 关闭指定的一个ServiceActor
+	 * @param serviceActor
+	 */
+	public void shutdown(main.java.com.juc.distributed.NameNodeServiceActor serviceActor) {
+		this.serviceActors.remove(serviceActor);
+	}
+	
+	/**
+	 * 迭代遍历ServiceActor
+	 */
+	public void iterateServiceActors() {
+		Iterator<main.java.com.juc.distributed.NameNodeServiceActor> iterator = serviceActors.iterator();
+		while(iterator.hasNext()) {
+			iterator.next();
 		}
 	}
 	  

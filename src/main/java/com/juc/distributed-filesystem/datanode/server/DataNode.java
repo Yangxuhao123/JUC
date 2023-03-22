@@ -2,7 +2,6 @@ package main.java.com.juc.distributed;
 
 /**
  * DataNode启动类
- * @author zhonghuashishan
  *
  */
 public class DataNode {
@@ -14,14 +13,14 @@ public class DataNode {
 	/**
 	 * 负责跟一组NameNode通信的组件
 	 */
-	private main.java.com.juc.distributed.NameNodeGroupOfferService offerService;
+	private main.java.com.juc.distributed.NameNodeOfferService offerService;
 	
 	/**
 	 * 初始化DataNode
 	 */
 	private void initialize() {
 		this.shouldRun = true;
-		this.offerService = new main.java.com.juc.distributed.NameNodeGroupOfferService();
+		this.offerService = new main.java.com.juc.distributed.NameNodeOfferService();
 		this.offerService.start();  
 	}
 	
