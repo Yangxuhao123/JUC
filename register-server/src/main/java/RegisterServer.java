@@ -1,11 +1,14 @@
 import java.util.UUID;
 
+import com.zhss.demo.register.server.web.RegisterServerController;
+
 /**
  * 代表了服务注册中心的这么一个东西
  * 
  * @author zhonghuashishan
  *
  */
+@SuppressWarnings("unused")
 public class RegisterServer {
 	
 	public static void main(String[] args) throws Exception {
@@ -15,28 +18,32 @@ public class RegisterServer {
 //				+ Thread.currentThread().getPriority()); 
 		RegisterServerController controller = new RegisterServerController();
 		
-		String serviceInstanceId = UUID.randomUUID().toString().replace("-", "");
+//		Thread.sleep(1000); 
+		
+//		String serviceInstanceId = UUID.randomUUID().toString().replace("-", "");
 		
 		// 模拟发起一个服务注册的请求
-		RegisterRequest registerRequest = new RegisterRequest();
-		registerRequest.setHostname("inventory-service-01");  
-		registerRequest.setIp("192.168.31.208");  
-		registerRequest.setPort(9000); 
-		registerRequest.setServiceInstanceId(serviceInstanceId);    
-		registerRequest.setServiceName("inventory-service");  
-
-		controller.register(registerRequest);
+//		RegisterRequest registerRequest = new RegisterRequest();
+//		registerRequest.setHostname("inventory-service-01");  
+//		registerRequest.setIp("192.168.31.208");  
+//		registerRequest.setPort(9000); 
+//		registerRequest.setServiceInstanceId(serviceInstanceId);    
+//		registerRequest.setServiceName("inventory-service");  
+//
+//		controller.register(registerRequest);
 		
-		// 模拟进行一次心跳，完成续约
-		HeartbeatRequest heartbeatRequest = new HeartbeatRequest();
-		heartbeatRequest.setServiceName("inventory-service");  
-		heartbeatRequest.setServiceInstanceId(serviceInstanceId); 
+//		System.out.println(controller.fetchFullRegistry());  
 		
-		controller.heartbeat(heartbeatRequest);
-		
-		// 开启一个后台线程，检测微服务的存活状态
-		ServiceAliveMonitor serviceAliveMonitor = new ServiceAliveMonitor();
-		serviceAliveMonitor.start();
+//		// 模拟进行一次心跳，完成续约
+//		HeartbeatRequest heartbeatRequest = new HeartbeatRequest();
+//		heartbeatRequest.setServiceName("inventory-service");  
+//		heartbeatRequest.setServiceInstanceId(serviceInstanceId); 
+//		
+//		controller.heartbeat(heartbeatRequest);
+//		
+//		// 开启一个后台线程，检测微服务的存活状态
+//		ServiceAliveMonitor serviceAliveMonitor = new ServiceAliveMonitor();
+//		serviceAliveMonitor.start();
 		
 		// 一般来说像这种register-server这种东西，当然不会只有一个main线程作为工作线程
 		// 他一般来说是一个web工程，部署在一个web服务器里面

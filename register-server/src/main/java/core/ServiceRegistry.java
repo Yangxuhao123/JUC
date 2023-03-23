@@ -1,6 +1,9 @@
-import java.util.HashMap;
-import java.util.LinkedList;
+package core;
+
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
@@ -28,12 +31,12 @@ public class ServiceRegistry {
 	 * 
 	 */
 	private Map<String, Map<String, ServiceInstance>> registry = 
-			new HashMap<String, Map<String, ServiceInstance>>();
+			new ConcurrentHashMap<String, Map<String, ServiceInstance>>();
 	/**
 	 * 最近变更的服务实例的队列
 	 */
-	private LinkedList<RecentlyChangedServiceInstance> recentlyChangedQueue = 
-			new LinkedList<RecentlyChangedServiceInstance>();
+	private Queue<RecentlyChangedServiceInstance> recentlyChangedQueue = 
+			new ConcurrentLinkedQueue<RecentlyChangedServiceInstance>();
 	/**
 	 * 服务注册表的锁
 	 */
@@ -112,7 +115,7 @@ public class ServiceRegistry {
 			Map<String, ServiceInstance> serviceInstanceMap = 
 					registry.get(serviceInstance.getServiceName());
 			if(serviceInstanceMap == null) {
-				serviceInstanceMap = new HashMap<String, ServiceInstance>();
+				serviceInstanceMap = new ConcurrentHashMap<String, ServiceInstance>();
 				registry.put(serviceInstance.getServiceName(), serviceInstanceMap);
 			}
 			serviceInstanceMap.put(serviceInstance.getServiceInstanceId(), 
@@ -260,7 +263,9 @@ public class ServiceRegistry {
 		public void run() {
 			while(true) {
 				try {
-					synchronized(instance) {
+					try {
+						writeLock();
+						
 						RecentlyChangedServiceInstance recentlyChangedItem = null;
 						Long currentTimestamp = System.currentTimeMillis();
 						
@@ -269,9 +274,11 @@ public class ServiceRegistry {
 							// 就从队列中移除
 							if(currentTimestamp - recentlyChangedItem.changedTimestamp 
 									> RECENTLY_CHANGED_ITEM_EXPIRED) {
-								recentlyChangedQueue.pop();
+								recentlyChangedQueue.poll();
 							}
 						}
+					} finally {
+						writeUnlock();
 					}
 					
 					Thread.sleep(RECENTLY_CHANGED_ITEM_CHECK_INTERVAL);

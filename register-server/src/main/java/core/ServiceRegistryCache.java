@@ -1,8 +1,12 @@
+package core;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
+
+import com.zhss.demo.register.server.web.Applications;
 
 /**
  * 服务注册表的缓存
@@ -55,7 +59,7 @@ public class ServiceRegistryCache {
 	 */
 	private CacheMapSyncDaemon cacheMapSyncDaemon;
 	/**
-	 * 内部锁
+	 * 对readWriteMap的内部锁
 	 */
 	private Object lock = new Object();
 	/**

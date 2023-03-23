@@ -1,3 +1,5 @@
+package core;
+
 /**
  * 自我保护机制
  * @author zhonghuashishan

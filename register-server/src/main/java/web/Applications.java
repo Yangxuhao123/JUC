@@ -1,5 +1,9 @@
+package web;
+
 import java.util.HashMap;
 import java.util.Map;
+
+import com.zhss.demo.register.server.core.ServiceInstance;
 
 /**
  * 完整的服务实例的信息

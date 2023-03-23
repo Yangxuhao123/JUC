@@ -1,5 +1,8 @@
-import java.util.LinkedList;
+package core;
 
+import java.util.Queue;
+
+import com.zhss.demo.register.server.core.ServiceRegistry.RecentlyChangedServiceInstance;
 
 /**
  * 增量注册表
@@ -8,19 +11,19 @@ import java.util.LinkedList;
  */
 public class DeltaRegistry {
 
-	private LinkedList<ServiceRegistry.RecentlyChangedServiceInstance> recentlyChangedQueue;
+	private Queue<RecentlyChangedServiceInstance> recentlyChangedQueue;
 	private Long serviceInstanceTotalCount;
 	
-	public DeltaRegistry(LinkedList<ServiceRegistry.RecentlyChangedServiceInstance> recentlyChangedQueue,
+	public DeltaRegistry(Queue<RecentlyChangedServiceInstance> recentlyChangedQueue,
 			Long serviceInstanceTotalCount) {
 		this.recentlyChangedQueue = recentlyChangedQueue;
 		this.serviceInstanceTotalCount = serviceInstanceTotalCount;
 	}
 	
-	public LinkedList<ServiceRegistry.RecentlyChangedServiceInstance> getRecentlyChangedQueue() {
+	public Queue<RecentlyChangedServiceInstance> getRecentlyChangedQueue() {
 		return recentlyChangedQueue;
 	}
-	public void setRecentlyChangedQueue(LinkedList<ServiceRegistry.RecentlyChangedServiceInstance> recentlyChangedQueue) {
+	public void setRecentlyChangedQueue(Queue<RecentlyChangedServiceInstance> recentlyChangedQueue) {
 		this.recentlyChangedQueue = recentlyChangedQueue;
 	}
 	public Long getServiceInstanceTotalCount() {

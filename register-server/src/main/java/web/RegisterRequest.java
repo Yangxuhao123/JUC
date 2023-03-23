@@ -1,14 +1,12 @@
+package web;
+
 /**
  * 注册请求
  * @author zhonghuashishan
  *
  */
-public class RegisterRequest {
-
-	/**
-	 * 服务名称
-	 */
-	private String serviceName;
+public class RegisterRequest extends AbstractRequest {
+	
 	/**
 	 * 服务所在机器的ip地址
 	 */
@@ -21,17 +19,7 @@ public class RegisterRequest {
 	 * 服务监听着哪个端口号
 	 */
 	private int port;
-	/**
-	 * 服务实例
-	 */
-	private String serviceInstanceId;
 	
-	public String getServiceName() {
-		return serviceName;
-	}
-	public void setServiceName(String serviceName) {
-		this.serviceName = serviceName;
-	}
 	public String getIp() {
 		return ip;
 	}
@@ -49,12 +37,6 @@ public class RegisterRequest {
 	}
 	public void setPort(int port) {
 		this.port = port;
-	}
-	public String getServiceInstanceId() {
-		return serviceInstanceId;
-	}
-	public void setServiceInstanceId(String serviceInstanceId) {
-		this.serviceInstanceId = serviceInstanceId;
 	}
 	
 	@Override
