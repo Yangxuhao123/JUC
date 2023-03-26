@@ -1,14 +1,9 @@
 package web;
 
-import com.zhss.demo.register.server.cluster.PeersReplicateBatch;
-import com.zhss.demo.register.server.cluster.PeersReplicator;
-import com.zhss.demo.register.server.core.DeltaRegistry;
-import com.zhss.demo.register.server.core.HeartbeatCounter;
-import com.zhss.demo.register.server.core.SelfProtectionPolicy;
-import com.zhss.demo.register.server.core.ServiceInstance;
-import com.zhss.demo.register.server.core.ServiceRegistry;
-import com.zhss.demo.register.server.core.ServiceRegistryCache;
-import com.zhss.demo.register.server.core.ServiceRegistryCache.CacheKey;
+
+import cluster.PeersReplicateBatch;
+import cluster.PeersReplicator;
+import core.*;
 
 /**
  * 这个controller是负责接收register-client发送过来的请求的
@@ -162,7 +157,7 @@ public class RegisterServerController {
 	 * @return
 	 */
 	public DeltaRegistry fetchDeltaRegistry() {
-		return (DeltaRegistry) registryCache.get(CacheKey.DELTA_SERVICE_REGISTRY); 
+		return (DeltaRegistry) registryCache.get(ServiceRegistryCache.CacheKey.DELTA_SERVICE_REGISTRY);
 	}
 	
 }

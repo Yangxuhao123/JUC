@@ -2,7 +2,6 @@ package core;
 
 import java.util.Queue;
 
-import com.zhss.demo.register.server.core.ServiceRegistry.RecentlyChangedServiceInstance;
 
 /**
  * 增量注册表
@@ -11,19 +10,19 @@ import com.zhss.demo.register.server.core.ServiceRegistry.RecentlyChangedService
  */
 public class DeltaRegistry {
 
-	private Queue<RecentlyChangedServiceInstance> recentlyChangedQueue;
+	private Queue<ServiceRegistry.RecentlyChangedServiceInstance> recentlyChangedQueue;
 	private Long serviceInstanceTotalCount;
 	
-	public DeltaRegistry(Queue<RecentlyChangedServiceInstance> recentlyChangedQueue,
+	public DeltaRegistry(Queue<ServiceRegistry.RecentlyChangedServiceInstance> recentlyChangedQueue,
 			Long serviceInstanceTotalCount) {
 		this.recentlyChangedQueue = recentlyChangedQueue;
 		this.serviceInstanceTotalCount = serviceInstanceTotalCount;
 	}
 	
-	public Queue<RecentlyChangedServiceInstance> getRecentlyChangedQueue() {
+	public Queue<ServiceRegistry.RecentlyChangedServiceInstance> getRecentlyChangedQueue() {
 		return recentlyChangedQueue;
 	}
-	public void setRecentlyChangedQueue(Queue<RecentlyChangedServiceInstance> recentlyChangedQueue) {
+	public void setRecentlyChangedQueue(Queue<ServiceRegistry.RecentlyChangedServiceInstance> recentlyChangedQueue) {
 		this.recentlyChangedQueue = recentlyChangedQueue;
 	}
 	public Long getServiceInstanceTotalCount() {

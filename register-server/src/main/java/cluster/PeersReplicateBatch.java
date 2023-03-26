@@ -1,9 +1,10 @@
 package cluster;
 
+import web.AbstractRequest;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.zhss.demo.register.server.web.AbstractRequest;
 
 /**
  * 集群同步batch

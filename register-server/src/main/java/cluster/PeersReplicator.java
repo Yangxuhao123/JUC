@@ -1,15 +1,17 @@
 package cluster;
 
+import web.AbstractRequest;
+import web.CancelRequest;
+import web.HeartbeatRequest;
+import web.RegisterRequest;
+
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import com.zhss.demo.register.server.web.AbstractRequest;
-import com.zhss.demo.register.server.web.CancelRequest;
-import com.zhss.demo.register.server.web.HeartbeatRequest;
-import com.zhss.demo.register.server.web.RegisterRequest;
+
 
 /**
  * 集群同步组件
@@ -44,7 +46,7 @@ public class PeersReplicator {
 	/**
 	 * 第一层队列：接收请求的高并发写入，无界队列
 	 */
-	private ConcurrentLinkedQueue<AbstractRequest> acceptorQueue = 
+	private ConcurrentLinkedQueue<AbstractRequest> acceptorQueue =
 			new ConcurrentLinkedQueue<AbstractRequest>();
 	/**
 	 * 第二层队列：有界队列，用于batch生成

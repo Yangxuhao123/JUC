@@ -1,12 +1,13 @@
 package core;
 
+import web.Applications;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
-import com.zhss.demo.register.server.web.Applications;
 
 /**
  * 服务注册表的缓存
