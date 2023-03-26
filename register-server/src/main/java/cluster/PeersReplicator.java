@@ -2,6 +2,8 @@ package cluster;
 
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.zhss.demo.register.server.web.AbstractRequest;
@@ -141,15 +143,27 @@ public class PeersReplicator {
 	 */
 	class PeersReplicateThread extends Thread {
 		
+		ExecutorService threadPool = Executors.newFixedThreadPool(
+				RegisterServerCluster.getPeers().size());
+		
 		@Override
 		public void run() {
 			while(true) {
 				try {
 					PeersReplicateBatch batch = replicateQueue.take();
 					if(batch != null) {
-						// 遍历所有的其他的register-server地址
-						// 给每个地址的register-server都发送一个http请求同步batch
-						System.out.println("给所有其他的register-server发送请求，同步batch过去......");      
+						for(String peer : RegisterServerCluster.getPeers()) {  
+							threadPool.execute(new Runnable() {
+								
+								@Override
+								public void run() {
+									// 遍历所有的其他的register-server地址
+									// 给每个地址的register-server都发送一个http请求同步batch
+									System.out.println("给" + peer + "发送请求，同步batch过去......"); 
+								}
+								
+							});
+						}
 					}
 				} catch (Exception e) {
 					e.printStackTrace(); 

@@ -1,14 +1,13 @@
-package main.java.com.juc.linkedblockingqueuedemo;
+package main.java.com.juc.arrayblockingqueuedemo;
 
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ArrayBlockingQueue;
 
-public class LinkedBlockingQueueDemo {
+public class ArrayBlockingQueueDemo {
     public static void main(String[] args) throws InterruptedException {
-        LinkedBlockingQueue<String> queue = new LinkedBlockingQueue<>(10);
+        ArrayBlockingQueue<String> queue = new ArrayBlockingQueue<>(10);
         queue.put("张三");
         System.out.println(queue.take());
         System.out.println(queue.size());
         queue.iterator();
-
     }
 }
